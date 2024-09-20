@@ -30,6 +30,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete = models.CASCADE, default = 1)
     description = models.CharField(max_length = 250, default = '', blank=True, null=True)
     image = models.ImageField(upload_to='upload/product/')
+    is_available = models.BooleanField(default = False)
 
     def __str__(self):
         return f'{self.name} {self.price} {self.description} {self.category} {self.image}'

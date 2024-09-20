@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Header Section -->
+{% include 'head.html' %}
+
+
+<body>
+    <!-- Navigation-->
+    {% include 'navb.html' %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert"> 
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="py-5">
+        <div class="register">
+            <div class="form">
+                <form class="registration-form", method="POST", action="{% url 'register' %}">
+                    <input type="text" placeholder="name" />
+                    <input type="password" placeholder="password" />
+                    <input type="text" placeholder="email" />
+                    <button>Create</button>
+                    <p><a href="#">Log In</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+
+</body>
+
+</html>
