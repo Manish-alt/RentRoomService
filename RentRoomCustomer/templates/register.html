@@ -18,15 +18,21 @@
     {% endif %}
 
     <div class="py-5">
-        <div class="register">
-            <div class="form">
-                <form class="registration-form", method="POST", action="{% url 'register' %}">
-                    <input type="text" placeholder="name" />
-                    <input type="password" placeholder="password" />
-                    <input type="text" placeholder="email" />
-                    <button>Create</button>
-                    <p><a href="#">Log In</a></p>
-                </form>
+        <div class="col-md-6 offset-md-3">
+            <div class="register" >
+                <div class="form">
+                    <form method="POST", action="{% url 'register' %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <br/><br/>
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                        <!-- <input type="text" placeholder="name" />
+                        <input type="password" placeholder="password" />
+                        <input type="text" placeholder="email" />
+                        <button>Create</button>
+                        <p><a href="#">Log In</a></p> -->
+                    </form>
+                </div>
             </div>
         </div>
     </div>

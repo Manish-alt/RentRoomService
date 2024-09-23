@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from.forms import SignUpForm
+from .forms import SignUpForm
 from django import forms
 
 def home(request):
@@ -49,6 +49,7 @@ def register_user(request):
             return redirect('home')
         else:
             messages.success(request, ('Oops there was a problem registering. Please try again.'))
+            return redirect('register')
 
     else:
-        return render(request, 'register.html', {})
+        return render(request, 'register.html', {'form': form})
