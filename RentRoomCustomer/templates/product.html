@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- Header Section -->
+    {% include 'head.html' %}
+    
+    <body>
+        <!-- Navigation-->
+        {% include 'navb.html' %}
+
+
+
+        <!-- Content Section -->
+            <div class="container">
+                <br/>
+                <div class="card md-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><small class="text-body-secondary">Last updated 3 minutes ago</small></p>
+                            <button type="button" value="{{ product.id }}" class="btn btn-outline-primary add-cart" id="add-cart">
+                                <i class="far fa-bookmark"></i> <span>Bookmark</span>
+                            </button>                            
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            </div>
+
+            <script>
+                // Function to toggle bookmark state for each button
+                function toggleBookmark(button) {
+                    const icon = button.querySelector('i');
+                    const span = button.querySelector('span');
+                    
+                    // Toggle between bookmark and bookmarked state
+                    if (icon.classList.contains('far')) {
+                        // Change to bookmarked (filled icon)
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        button.classList.remove('btn-outline-primary');
+                        button.classList.add('btn-primary');
+                        span.textContent = 'Bookmarked';  // Update text
+                    } else {
+                        // Change to unbookmarked (outline icon)
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        button.classList.remove('btn-primary');
+                        button.classList.add('btn-outline-primary');
+                        span.textContent = 'Bookmark';  // Update text
+                    }
+                }
+                
+                // Attach event listener for the button click
+                $(document).on('click', '#add-cart', function(e) {
+                    e.preventDefault();
+    
+                    const button = this;
+                    const productId = $(this).val();
+                    const isBookmarked = $(this).find('i').hasClass('fas'); // Check bookmark state
+    
+                    // Determine URL based on current state (add/remove bookmark)
+                    const url = isBookmarked ? "{% url 'cart_delete' %}" : "{% url 'cart_add' %}";
+    
+                    // AJAX call to add or remove product from cart
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            product_id: productId,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            action: 'post'
+                        },
+                        success: function(json) {
+                            toggleBookmark(button);  // Toggle the bookmark state
+                            document.getElementById("cart_quantity").textContent = json.qty;
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log(errmsg);
+                        }
+                    });
+                });
+            </script>
+
+            <br/><br/>
+
+        <!-- Footer Section -->
+        {% include 'footer.html' %}
+    </body>
+</html>

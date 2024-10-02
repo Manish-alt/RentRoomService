@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Product
+from .models import Product, Category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm
+from .forms import SignUpForm, UpdateUserForm
 from django import forms
 
 def home(request):
@@ -53,3 +53,41 @@ def register_user(request):
 
     else:
         return render(request, 'register.html', {'form': form})
+    
+    
+def product(request, pk):
+    product = Product.objects.get(id=pk)
+    return render(request, 'product.html', {'product':product})
+
+def category(request, foo):
+    foo = foo.replace('-', ' ')
+    try:
+        category = Category.objects.get(name = foo)
+        products = Product.objects.filter(category = category)
+        return render(request, 'category.html', {'products': products, 'category': category})
+    except:
+        messages.success(request, ("Category Doesn't exist"))
+        return redirect('home')
+    
+    
+def update_user(request):
+    if request.user.is_authenticated:
+        current_user = User.objects.get(id=request.user.id)
+        user_form = UpdateUserForm(request.POST or None, instance=current_user)
+        
+        if user_form.is_valid():
+            user_form.save()
+            
+            login(request, current_user)
+            messages.success(request, "User has been updated")
+            return redirect('home')
+        return render(request, 'update_profile.html', {'user_form': user_form})
+    else:
+        messages.success(request, 'Something went wrong')
+        return redirect('home')
+            
+        
+        
+    return render(request, 'update_profile.html', {})
+
+    
