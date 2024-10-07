@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- Header Section -->
+    {% include 'head.html' %}
+    
+    <body>
+        <!-- Navigation-->
+        {% include 'navb.html' %}
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert"> 
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Search Rooms</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Find Your Dream Room</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Section -->
+            <div class="container">
+                <div class="row">
+                    <center>
+                    <div class="col-10">
+                        <br/><br/>
+                        <div class="card">
+                            <div class="card-header">
+                              Search Products
+                            </div>
+                            <div class="card-body">
+                              <form method="POST", action="{% url 'search' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" name="searched" placeholder="Search...">
+                                  </div>
+                                  <button type="submit" class="btn btn-secondary">Search</button>
+                              </form>
+                            </div>
+                          </div>
+                            
+
+
+                        <br/><br/>
+                        
+                                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                        {% if searched %}
+                          {% for product in searched %}
+                          <div class="col mb-5">
+                            <div class="card h-100">
+                                {% if product.is_available %}
+                                <!-- Is Available Badge -->
+                                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem;">Available</div>
+    
+                                {% else %}
+                                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem;">Not Available</div>
+    
+                                {% endif %}
+    
+                                <!-- Product image-->
+                                <img class="card-img-top" src="{{ product.image.url }}" alt="..." style="height: 238.47px; object-fit: cover; object-position: center;"/>
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-start">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                                        <!-- Product address-->
+                                        <br/>
+                                        <p><b>Address: </b> {{ product.address }}, {{product.city}}, {{ product.state }}, {{product.country}}, {{ product.zipcode }} 
+                                            <br/><b>Price: </b>${{ product.price }} per week 
+    
+                                            <!-- Product sharable-->
+                                            <br/>
+                                            {% if product.is_sharable %}
+                                                <b>Is sharable: </b> Yes
+                                            {% else %}
+                                                <b>Is sharable: </b>No
+                                            {% endif %}
+    
+                                            <!-- Product fully furnished-->
+                                            <br/>
+                                            {% if product.is_Fully_Furnished %}
+                                                <b>Is Fully Furnished: </b> Yes
+                                            {% else %}
+                                                <b>Is Fully Furnished: </b> No
+                                            {% endif %}
+    
+                                        </p>
+                                       
+                                    </div>
+                                   
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View</a></div>
+                                </div>
+                            </div>
+                        </div>
+                          {% endfor %}
+                          {% endif %}
+                          <br/><br/>
+                          </div>
+
+                        
+                    </div>
+                </center>
+                </div>
+            </div>
+        <!-- Footer Section -->
+        {% include 'footer.html' %}
+    </body>
+</html>

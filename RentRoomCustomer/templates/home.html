@@ -23,8 +23,8 @@
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Shop in style</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                    <h1 class="display-4 fw-bolder">Rent Your Dream Room</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Find your dream room</p>
                 </div>
             </div>
         </header>
@@ -45,15 +45,37 @@
                             {% endif %}
 
                             <!-- Product image-->
-                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." style="width: 270px; height: 238.47px; object-fit: cover; object-position: center;"/>
                             <!-- Product details-->
                             <div class="card-body p-4">
-                                <div class="text-center">
+                                <div class="text-start">
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
-                                    <!-- Product price-->
-                                    ${{ product.price }}
+                                    <!-- Product address-->
+                                    <br/>
+                                    <p><b>Address: </b> {{ product.address }}, {{product.city}}, {{ product.state }}, {{product.country}}, {{ product.zipcode }} 
+                                        <br/><b>Price: </b>${{ product.price }} per week 
+
+                                        <!-- Product sharable-->
+                                        <br/>
+                                        {% if product.is_sharable %}
+                                            <b>Is sharable: </b> Yes
+                                        {% else %}
+                                            <b>Is sharable: </b>No
+                                        {% endif %}
+
+                                        <!-- Product fully furnished-->
+                                        <br/>
+                                        {% if product.is_Fully_Furnished %}
+                                            <b>Is Fully Furnished: </b> Yes
+                                        {% else %}
+                                            <b>Is Fully Furnished: </b> No
+                                        {% endif %}
+
+                                    </p>
+                                   
                                 </div>
+                               
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">

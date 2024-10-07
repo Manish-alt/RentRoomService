@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Product, Category
+from .models import Product, Category, Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm
+from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django import forms
+from django.db.models import Q
+import json
+from cart.cart import Cart
 
 def home(request):
     products = Product.objects.all()
@@ -21,6 +24,15 @@ def login_user(request):
         user = authenticate(request, username = username, password = password)
         if user is not None:
             login(request, user)
+            
+            current_user = Profile.objects.get(user__id=request.user.id)
+            saved_bookmark = current_user.old_bookmark
+            if saved_bookmark:
+                converted_bookmark = json.loads(saved_bookmark)
+                bookmark = Cart(request)
+                for key, value in converted_bookmark.items():
+                    bookmark.db_add(product=key)
+            
             messages.success(request, ('You have been logged in'))
             return redirect('home')
         else:
@@ -46,7 +58,7 @@ def register_user(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, ("You have Registered Successfully. Welcome"))
-            return redirect('home')
+            return redirect('update_info')
         else:
             messages.success(request, ('Oops there was a problem registering. Please try again.'))
             return redirect('register')
@@ -56,8 +68,12 @@ def register_user(request):
     
     
 def product(request, pk):
-    product = Product.objects.get(id=pk)
-    return render(request, 'product.html', {'product':product})
+    if request.user.is_authenticated:
+        product = Product.objects.get(id=pk)
+        return render(request, 'product.html', {'product':product})
+    else:
+        messages.success(request, "User is not logged in.")
+        return redirect('login')
 
 def category(request, foo):
     foo = foo.replace('-', ' ')
@@ -88,6 +104,53 @@ def update_user(request):
             
         
         
-    return render(request, 'update_profile.html', {})
+def update_password(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        if request.method == 'POST':
+            form = ChangePasswordForm(current_user, request)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Password changed Successfully")
+                login(request, current_user)
+                return redirect('update_user')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                return redirect('update_password')
+                
+        else:
+            form = ChangePasswordForm(current_user)
+            return render(request, 'update_password.html', {'form':form})
 
+    else:
+        return redirect('home')
     
+def update_info(request):
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(user__id=request.user.id)
+        form = UserInfoForm(request.POST or None, instance=current_user)
+        
+        if form.is_valid():
+            form.save()
+            
+            messages.success(request, "User Info has been updated")
+            return redirect('home')
+        return render(request, 'update_info.html', {'form': form})
+    else:
+        messages.success(request, 'Something went wrong')
+        return redirect('home')
+    
+
+def search(request):
+    if request.method =="POST":
+        searched = request.POST['searched']
+        searched = Product.objects.filter(Q(name__icontains=searched))
+        
+        if not searched:
+            messages.success(request, "Searched room doesn't exists.")
+            return render(request, 'search.html', {})
+        else:
+            return render(request, 'search.html', {'searched': searched})
+    else:
+        return render(request, 'search.html', {})

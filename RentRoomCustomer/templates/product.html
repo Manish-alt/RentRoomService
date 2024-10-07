@@ -15,13 +15,37 @@
                 <div class="card md-3">
                 <div class="row g-0">
                     <div class="col-md-4">
-                        <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="">
+                        <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="" style="width:644px; height:414px; object-fit: cover; object-position: center;">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-text"><small class="text-body-secondary">Last updated 3 minutes ago</small></p>
+                            <p><b>{{ product.address }}, {{product.city}}, {{ product.state }}, {{ product.country }}, {{ product.zipcode }}</b>
+                                <br/><b>Price: </b>${{ product.price }} per week 
+
+                                <!-- Product sharable-->
+                                <br/>
+                                {% if product.is_sharable %}
+                                    <b>Is sharable: </b> Yes
+                                {% else %}
+                                    <b>Is sharable: </b>No
+                                {% endif %}
+
+                                <!-- Product fully furnished-->
+                                <br/>
+                                {% if product.is_Fully_Furnished %}
+                                    <b>Is Fully Furnished: </b> Yes
+                                {% else %}
+                                    <b>Is Fully Furnished: </b> No
+                                {% endif %}
+                                <br/>
+                                <b>Phone: </b> {{product.extension}} {{product.phone}}
+                                <br/>
+                                <b>Shared Anemities: </b> {{product.amenities}}
+
+                            </p>
+                            <p class="card-text"><b>Description:</b><br/>{{ product.description }}</p>
+                           
                             <button type="button" value="{{ product.id }}" class="btn btn-outline-primary add-cart" id="add-cart">
                                 <i class="far fa-bookmark"></i> <span>Bookmark</span>
                             </button>                            
@@ -89,7 +113,7 @@
                 });
             </script>
 
-            <br/><br/>
+            <br/><br/><br/><br/><br/><br/>
 
         <!-- Footer Section -->
         {% include 'footer.html' %}
